@@ -16,7 +16,7 @@ export default async function LandingPage() {
         <div className="absolute bottom-auto left-auto right-0 top-0 h-[500px] w-[500px] -translate-x-[30%] translate-y-[20%] rounded-full bg-[rgba(117,248,124,0.5)] dark:bg-[rgba(117,248,124,0.2)] opacity-50 blur-[80px]"></div>
       </div>
 
-      <nav className="mx-auto max-w-screen-lg h-16 flex justify-between items-center">
+      <nav className="mx-4 lg:mx-auto max-w-screen-lg h-16 flex justify-between items-center">
         <Link href="/">
           <Image src={"/icon.png"} width={40} height={40} alt="logo" />
         </Link>
@@ -40,7 +40,7 @@ export default async function LandingPage() {
         </div>
       </nav>
 
-      <div className="mx-auto max-w-screen-lg pt-16 pb-24 lg:pb-32">
+      <div className="mx-4 lg:mx-auto max-w-screen-lg pt-16 pb-24 lg:pb-32">
         <div className="flex justify-center">
           <a
             className="inline-flex items-center gap-x-2 transition border hover:bg-muted/40 text-sm p-1 ps-3 rounded-full"
@@ -56,7 +56,7 @@ export default async function LandingPage() {
 
         <div className="mt-5 max-w-2xl text-center mx-auto">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            <span className="text-green-600">NextSecure</span> - Next.js Auth Starter Template
+            <span className="text-green-500">NextSecure</span> - Next.js Auth Starter Template
           </h1>
         </div>
         <div className="mt-5 max-w-3xl text-center mx-auto">
@@ -82,7 +82,7 @@ export default async function LandingPage() {
           </SignedOut>
           <Button size={"lg"} variant={"outline"} asChild>
             <Link href="https://www.prisma.io/docs/getting-started">
-              Read Docs
+              Prisma Docs
             </Link>
           </Button>
         </div>
@@ -118,11 +118,11 @@ export default async function LandingPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-screen-md grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mx-4 md:mx-auto max-w-screen-md grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-card/10 text-foreground">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Database className="mr-2 h-5 w-5 text-[#47A248]" />
+              <Database className="mr-2 h-5 w-5 text-green-500" />
               Prisma Docs
             </CardTitle>
             <CardDescription className="text-muted-foreground">
@@ -139,7 +139,7 @@ export default async function LandingPage() {
         <Card className="bg-card/10 text-foreground">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Book className="mr-2 h-5 w-5 text-[#47A248]" />
+              <Book className="mr-2 h-5 w-5 text-green-500" />
               Next.js Docs
             </CardTitle>
             <CardDescription className="text-muted-foreground">
@@ -156,7 +156,7 @@ export default async function LandingPage() {
         <Card className="bg-card/10 text-foreground">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="mr-2 h-5 w-5 text-[#47A248]" />
+              <Shield className="mr-2 h-5 w-5 text-green-500" />
               Auth.js Docs
             </CardTitle>
             <CardDescription className="text-muted-foreground">
@@ -173,7 +173,7 @@ export default async function LandingPage() {
         <Card className="bg-card/10 text-foreground">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Rocket className="mr-2 h-5 w-5 text-[#47A248]" />
+              <Rocket className="mr-2 h-5 w-5 text-green-500" />
               Starter Kit
             </CardTitle>
             <CardDescription className="text-muted-foreground">
@@ -189,7 +189,7 @@ export default async function LandingPage() {
       </div>
 
       <footer className="w-full mt-14">
-        <div className="mx-auto max-w-screen-lg flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
+        <div className="mx-4 lg:mx-auto max-w-screen-lg flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
           <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
             <p className="text-center text-xs leading-loose text-muted-foreground md:text-left">
               Built with <Heart className="inline-block h-4 w-4 text-red-500" /> by{" "}
