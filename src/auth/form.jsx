@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { OAuthProviders } from '@/auth/oauth'
+import { OAuthProviders } from '@/auth/utils';
 
 
 

@@ -17,10 +17,6 @@ export const SvgBrandGoogle = ({size}) => {
 
 export const OAuthProviders = [
   {
-    provider: "google",
-    icon: SvgBrandGoogle,
-  },
-  {
     provider: "github",
     icon: SvgBrandGithub,
   },
