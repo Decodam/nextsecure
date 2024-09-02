@@ -32,8 +32,11 @@ export default async function LandingPage() {
           </SignedIn>
           <SignedOut>
             <div className="flex items-center gap-2">
-              <Button size="lg" asChild>
-                <Link href="/login">Get Started</Link>
+              <Button variant="outline" asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Signup</Link>
               </Button>
             </div>
           </SignedOut>
