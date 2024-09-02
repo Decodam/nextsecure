@@ -7,20 +7,23 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { OAuthProviders } from '@/auth/utils';
-import {LoginWithOAuthProvider} from './actions'
+import {LoginWithOAuthProvider} from '../actions'
 
 
 
-export default function AuthForm({borderless, className}) {
-  const [email, setEmail] = useState('')
+export default function LoginForm({borderless, className}) {
+
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const searchParams = useSearchParams()
-  const next = searchParams.get('next')
-  const oauth_error = searchParams.get('error')
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const next = searchParams.get('next');
+  const oauth_error = searchParams.get('error');
   
 
   useEffect(() => {
@@ -30,11 +33,10 @@ export default function AuthForm({borderless, className}) {
   }, [oauth_error])
 
 
-
   function resetForm() {
     setEmail('');
     setError('');
-    setLoading(false)
+    setLoading(false);
   }
 
 
@@ -43,18 +45,18 @@ export default function AuthForm({borderless, className}) {
     setLoading(true);
 
 
+    localStorage.setItem('otpToken', 'dummyToken');
     alert("email");
-    
-      
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+
+    router.push("/verify/otp")
+
+    resetForm();
   }
 
 
 
   const handleOauthLogin = async(provider) => {
-    const error = await LoginWithOAuthProvider(provider);
+    const error = await LoginWithOAuthProvider(provider, next);
 
     if(error){
       setError(error.message);
@@ -69,11 +71,14 @@ export default function AuthForm({borderless, className}) {
           <Link href={"/"} className='mx-auto mb-4 mt-2'>
             <Image height={60} width={60} src="/icon.png" alt="alt" /> 
           </Link>
-          <CardTitle className="text-2xl font-bold text-center">Login to NextSecure</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Login to NextSecure
+          </CardTitle>
           <CardDescription className="text-center">
             Choose your preferred login method
           </CardDescription>
         </CardHeader>
+        
         <CardContent className="space-y-4">
           {(OAuthProviders && OAuthProviders.length > 0) && (
             <>
@@ -114,6 +119,7 @@ export default function AuthForm({borderless, className}) {
           </form>
 
         </CardContent>
+
         <CardFooter>
           <p className="text-xs text-center text-muted-foreground w-full">
             By clicking continue, you agree to our{" "}
