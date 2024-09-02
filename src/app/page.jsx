@@ -1,13 +1,10 @@
-import Link from "next/link";
+import LandingPage from "@/components/content/landing";
 
 
 export default function Home({}) {
   return (
     <div>
-      Home
-      <Link href={"/login"}>
-        Login to get started
-      </Link>
+      <LandingPage />
     </div>
   );
 }

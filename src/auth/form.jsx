@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { OAuthProviders } from '@/auth/utils';
+import {LoginWithOAuthProvider} from './actions'
 
 
 
@@ -53,7 +54,12 @@ export default function AuthForm({borderless, className}) {
 
 
   const handleOauthLogin = async(provider) => {
-   alert(provider);
+    const error = await LoginWithOAuthProvider(provider);
+
+    if(error){
+      setError(error.message);
+      setLoading(false)
+    }
   }
 
 
