@@ -11,7 +11,6 @@ import { PasswordInput } from '@/auth/ui/password-input'
 import { checkPasswordStrength } from '@/auth/utils'
 import { LoginWithOAuthProvider } from '../actions'
 import OauthButtons from './oauthButtons'
-import { OAuthProviders } from '@/auth/providers'
 
 
 
@@ -77,12 +76,6 @@ export default function SignupForm({borderless, className}) {
     }, 1000);
   }
 
-  const handleOauthLogin = async(provider) => {
-    const auth_error = await LoginWithOAuthProvider(provider, next);
-    if(auth_error) {
-      setError(auth_error.message)
-    }
-  }
 
 
 
@@ -161,11 +154,7 @@ export default function SignupForm({borderless, className}) {
             </Link>
           </div>
 
-          {OAuthProviders && (
-            <OauthButtons providers={OAuthProviders} handleClick={handleOauthLogin} />
-          )}
-
-
+          <OauthButtons nextUrl={next} />
         </CardContent>
         <CardFooter>
           <p className="text-xs text-center text-muted-foreground w-full">

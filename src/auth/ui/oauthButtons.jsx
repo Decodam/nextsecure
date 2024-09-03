@@ -1,8 +1,19 @@
 "use client"
 import { Button } from "@/components/ui/button";
+import { OAuthProviders } from "@/auth/providers";
+import { LoginWithOAuthProvider } from "@/auth/actions";
 
 
-export default function OauthButtons({providers, handleClick, formBelow}) {
+export default function OauthButtons({handleClick, nextUrl, formBelow}) {
+  if (!OAuthProviders || OAuthProviders.length === 0) return;
+
+  const handleOauthLogin = async(provider) => {
+    const auth_error = await LoginWithOAuthProvider(provider, nextUrl);
+    if(auth_error) {
+      console.error(auth_error.message)
+    }
+  }
+
   return (
     <div className={`flex ${formBelow ? "flex-col-reverse" : "flex-col"} gap-4`}>
       <span className="flex items-center">
@@ -13,32 +24,32 @@ export default function OauthButtons({providers, handleClick, formBelow}) {
 
       <div
         className={`${
-          providers.length > 4
+          OAuthProviders.length > 4
             ? 'space-y-2'
-            : `grid grid-cols-${providers.length} gap-4`  // Default grid for 1, 3, 4 providers
+            : `grid grid-cols-${OAuthProviders.length} gap-4`
         }`}
       >
-        {providers.map(({ provider, icon: Icon }) => (
+        {OAuthProviders.map(({ provider, icon: Icon }) => (
           <Button
-            onClick={() => { handleClick(provider) }}
+            onClick={() => { if(handleClick) {handleClick(provider)} else {handleOauthLogin(provider)} }}
             className="w-full space-x-2"
             variant="outline"
             size="lg"
             key={provider}
           >
-            {(providers.length < 2 || providers.length > 4) && (
+            {(OAuthProviders.length < 2 || OAuthProviders.length > 4) && (
               <>
                 <Icon />
                 <span className="capitalize">Continue with {provider}</span>
               </>
             )}
-            {providers.length === 2 && (
+            {OAuthProviders.length === 2 && (
               <>
                 <Icon />
                 <span className="capitalize">{provider}</span>
               </>
             )}
-            {providers.length > 2 && providers.length <= 4 && <Icon />}
+            {OAuthProviders.length > 2 && OAuthProviders.length <= 4 && <Icon />}
           </Button>
         ))}
       </div>

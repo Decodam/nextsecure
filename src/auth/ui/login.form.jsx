@@ -9,9 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PasswordInput } from '@/auth/ui/password-input' 
 import { checkPasswordStrength } from '@/auth/utils'
-import { LoginWithOAuthProvider } from '@/auth/actions'
 import OauthButtons from '@/auth/ui/oauthButtons'
-import { OAuthProviders } from '@/auth/providers'
 
 
 
@@ -63,14 +61,6 @@ export default function LoginForm({borderless, className}) {
     }, 1000);
   }
 
-  const handleOauthLogin = async(provider) => {
-    const auth_error = await LoginWithOAuthProvider(provider, next);
-    if(auth_error) {
-      setError(auth_error.message)
-    }
-  }
-
-
 
   return (
     <Card className={`w-full max-w-md ${borderless && "border-none shadow-none bg-background" }  max-md:border-none  max-md:shadow-none  max-md:bg-background mx-auto ${className && className}`}>
@@ -89,9 +79,7 @@ export default function LoginForm({borderless, className}) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {OAuthProviders && (
-            <OauthButtons providers={OAuthProviders} handleClick={handleOauthLogin} formBelow={true} />
-          )}
+          <OauthButtons nextUrl={next} formBelow={true} />
 
           <form className='space-y-4' onSubmit={handleEmailLogin}>
             {error && <p className='text-xs text-destructive dark:text-red-500 text-center'>{error}</p>}
