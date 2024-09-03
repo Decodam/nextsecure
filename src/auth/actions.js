@@ -30,7 +30,6 @@ export async function loginWithEmailPassword(email, password) {
       redirect: false,
     });
 
-    return {success: true, message: "Welcome back! Lets continue where you left off!"}
   } catch (error) {
     if (error instanceof Error) {
       const type = error.type;
@@ -38,14 +37,16 @@ export async function loginWithEmailPassword(email, password) {
 
       switch (type) {
         case "CredentialsSignin":
-          return {success: false, message: "Invalid credentials."};
+          return {message: "Invalid login credentials."};
         case "CallbackRouteError":
-          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+          return {message: cause && cause.err ? cause.err.toString() : "Callback route error."};
         default:
-          return {success: false, message: error.message || "Something went wrong. Please try again"};
+          return {message: error.message || "Something went wrong. Please try again"};
       }
     }
   }
+
+  redirect("/")
 }
 
 
@@ -72,13 +73,23 @@ export async function createRecoveryLink(email) {
       throw new Error("User not found with given email adress not found!");
     }
 
+    const existingToken = await prisma.verificationToken.findFirst({
+      where: {
+        identifier: email,
+      },
+    });
+
+    if (existingToken) {
+      throw new Error("A recovery link has already been sent to this email address. Please check your email.");
+    }
+
     await signIn("nodemailer", {
       email,
       redirect: false,
       callbackUrl: "/",
     });
 
-    return {success: true, message: "Magic link sent! Please check your email to recover your account."}
+
   } catch (error) {
     if (error instanceof Error) {
       const type = error.type;
@@ -86,14 +97,16 @@ export async function createRecoveryLink(email) {
 
       switch (type) {
         case "CredentialsSignin":
-          return {success: false, message: "Invalid credentials."};
+          return {message: "Invalid credentials."};
         case "CallbackRouteError":
-          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+          return {message: cause && cause.err ? cause.err.toString() : "Callback route error."};
         default:
-          return {success: false, message: error.message || "Something went wrong. Please try again"};
+          return {message: error.message || "Something went wrong. Please try again"};
       }
     }
   }
+
+  redirect("/")
 }
 
 
@@ -144,7 +157,7 @@ export async function createNewAccountLink(email, fullname, password) {
       callbackUrl: "/",
     });
 
-    return {success: true, message: "Magic link sent! Please check your email to verify your account."}
+    
   } catch (error) {
     if (error instanceof Error) {
       const type = error.type;
@@ -152,12 +165,14 @@ export async function createNewAccountLink(email, fullname, password) {
 
       switch (type) {
         case "CredentialsSignin":
-          return {success: false, message: "Invalid credentials."};
+          return {message: "Invalid credentials."};
         case "CallbackRouteError":
-          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+          return {message: cause && cause.err ? cause.err.toString() : "Callback route error."};
         default:
-          return {success: false, message: error.message || "Something went wrong. Please try again"};
+          return {message: error.message || "Something went wrong. Please try again"};
       }
     }
   }
+
+  redirect("/")
 }

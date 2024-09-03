@@ -70,15 +70,19 @@ export default function SignupForm({borderless, className}) {
     }
 
 
-    const magicLink = await createNewAccountLink( email, fullName, password ) 
+    const resultError = await createNewAccountLink( email, fullName, password ) 
 
-    if (magicLink && !magicLink.success) {
-      setError(magicLink.message)
+
+    if (resultError) {
+      setError(resultError.message)
       setLoading(false)
       return
     }
 
-    alert(magicLink.message)
+    toast({
+      title: "Verificaion link sent!",
+      description: "A verification magic link has been sent to your email address. Please login to verify and activate your account"
+    })
     
       
     resetForm()

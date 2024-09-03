@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import Image from 'next/image'
 import Link from 'next/link'
-import { createRecoveryLink } from '../actions'
+import { createRecoveryLink } from '@/auth/actions'
+import { useToast } from '@/hooks/use-toast'
 
 
 
@@ -15,6 +16,9 @@ export default function AccountRecoveryForm({borderless, className}) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { toast } = useToast()
+
 
   function resetForm() {
     setEmail('');
@@ -26,15 +30,19 @@ export default function AccountRecoveryForm({borderless, className}) {
     e.preventDefault()
     setLoading(true);
     
-    const magicLink = await createRecoveryLink( email ) 
+    const resultError = await createRecoveryLink( email ) 
 
-    if (magicLink && !magicLink.success) {
-      setError(magicLink.message)
+    if (resultError) {
+      setError(resultError.message)
       setLoading(false)
       return
     }
 
-    alert(magicLink.message)
+    toast({
+      title: "Recovery link sent!",
+      description: "A magic link has been sent to your verified email address. Please login to recover your account"
+    })
+
 
     setTimeout(() => {
       resetForm()
