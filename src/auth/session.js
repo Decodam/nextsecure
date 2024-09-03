@@ -1,4 +1,5 @@
 import { auth } from "@/auth/core";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 
 
@@ -26,4 +27,22 @@ export async function SignedOut({ children }) {
   if (session?.user) return null;
 
   return <>{children}</>;
+}
+
+export async function protectRoute(next = '/') {
+  const session = await getServerSession();
+
+  if (!session?.user) {
+    redirect(`/login?next=${encodeURIComponent(next)}`);
+  }
+
+  return session;
+}
+
+export async function redirectOnAuth(redirectTo = '/') {
+  const session = await getServerSession();
+
+  if (session?.user) {
+    redirect(redirectTo);
+  }
 }

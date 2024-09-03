@@ -10,6 +10,8 @@ import Link from 'next/link'
 import { PasswordInput } from '@/auth/ui/password-input' 
 import { checkPasswordStrength } from '@/auth/utils'
 import OauthButtons from '@/auth/ui/oauthButtons'
+import { loginWithEmailPassword } from '@/auth/actions'
+import { useToast } from '@/hooks/use-toast'
 
 
 
@@ -19,6 +21,9 @@ export default function LoginForm({borderless, className}) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [next, setNext] = useState(null);
+
+  const { toast } = useToast()
+
 
 
   useEffect(() => {
@@ -50,15 +55,27 @@ export default function LoginForm({borderless, className}) {
     e.preventDefault()
     setLoading(true);
     
-    if (passwordScore < 2) {
+    if (passwordScore < 3) {
       setError("Password is too weak! Add numbers, special characters and minimum 8 digits with capital letters.");
       setLoading(false);
       return;
     }
       
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+
+    const resultError = await loginWithEmailPassword( email, password ) 
+
+    if (resultError) {
+      setError(resultError.message)
+      setLoading(false)
+      return
+    }
+
+    toast({
+      title: "Login successful!",
+      description: "Welcome back to your account! Lets pick up from where you left!"
+    })
+
+    resetForm()
   }
 
 

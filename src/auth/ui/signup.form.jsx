@@ -9,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PasswordInput } from '@/auth/ui/password-input' 
 import { checkPasswordStrength } from '@/auth/utils'
-import { LoginWithOAuthProvider } from '../actions'
+import { createNewAccountLink } from '@/auth/actions'
 import OauthButtons from './oauthButtons'
 
 
@@ -69,11 +69,23 @@ export default function SignupForm({borderless, className}) {
       return
     }
 
+
+    const resultError = await createNewAccountLink( email, fullName, password ) 
+
+
+    if (resultError) {
+      setError(resultError.message)
+      setLoading(false)
+      return
+    }
+
+    toast({
+      title: "Verificaion link sent!",
+      description: "A verification magic link has been sent to your email address. Please login to verify and activate your account"
+    })
     
       
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+    resetForm()
   }
 
 
