@@ -8,6 +8,7 @@ import { SvgBrandGithub } from "@/auth/ui/brands";
 import CopyButton from "@/components/content/copyButton";
 import { SignedIn, SignedOut } from "@/auth/session";
 import { logout } from "@/auth/actions";
+import { ThemeToggleIconButton } from "@/components/ui/theme";
 
 export default function Home() {
   return (
@@ -44,6 +45,7 @@ export default function Home() {
               </Button>
             </SignedOut>
           </div>
+          <ThemeToggleIconButton />
         </div>
       </nav>
 
@@ -52,7 +54,6 @@ export default function Home() {
           <CopyButton 
             textToCopy="npx create-next-app -e https://github.com/Decodam/nextsecure"
             title={"Get started - Create Next App"}
-          
           />
         </div>
 
@@ -69,13 +70,14 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mt-8 gap-3 flex justify-center">
-          <Button size={"lg"} asChild>
-            <Link href={"/login"}>Try Now</Link>
-          </Button>
-          <Button size={"lg"} variant={"outline"} asChild>
-            <Link href="https://docs.mongodb.com/manual/">
-              Read Docs
+        <div className="mt-8 flex justify-center">
+          <Button size={"lg"} className="bg-foreground/95 hover:bg-foreground" asChild>
+            <Link className="space-x-2" 
+              href="https://github.com/Decodam/nextsecure"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SvgBrandGithub /> <span>Github Repo</span>
             </Link>
           </Button>
         </div>
