@@ -28,8 +28,8 @@ export default function Home() {
                 <form action={logout}>
                   <button type="submit">
                   <Avatar>
-                    <AvatarImage src={user.image} />
-                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    <AvatarImage src={user?.image} />
+                    <AvatarFallback>{user?.name && user.name[0]}</AvatarFallback>
                   </Avatar>
                   </button>
                 </form>

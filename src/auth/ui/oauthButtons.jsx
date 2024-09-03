@@ -9,7 +9,7 @@ export default function OauthButtons({handleClick, nextUrl, formBelow}) {
 
   const handleOauthLogin = async(provider) => {
     const auth_error = await LoginWithOAuthProvider(provider, nextUrl);
-    if(auth_error) {
+    if(auth_error && !auth_error.success) {
       console.error(auth_error.message)
     }
   }

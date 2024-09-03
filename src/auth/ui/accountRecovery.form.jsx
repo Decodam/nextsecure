@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import Image from 'next/image'
 import Link from 'next/link'
+import { createRecoveryLink } from '../actions'
 
 
 
@@ -25,6 +26,16 @@ export default function AccountRecoveryForm({borderless, className}) {
     e.preventDefault()
     setLoading(true);
     
+    const magicLink = await createRecoveryLink( email ) 
+
+    if (magicLink && !magicLink.success) {
+      setError(magicLink.message)
+      setLoading(false)
+      return
+    }
+
+    alert(magicLink.message)
+
     setTimeout(() => {
       resetForm()
     }, 1000);

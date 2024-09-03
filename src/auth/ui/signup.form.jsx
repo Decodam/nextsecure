@@ -9,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PasswordInput } from '@/auth/ui/password-input' 
 import { checkPasswordStrength } from '@/auth/utils'
-import { LoginWithOAuthProvider } from '../actions'
+import { createNewAccountLink } from '@/auth/actions'
 import OauthButtons from './oauthButtons'
 
 
@@ -69,6 +69,16 @@ export default function SignupForm({borderless, className}) {
       return
     }
 
+
+    const magicLink = await createNewAccountLink( email, fullName, password ) 
+
+    if (magicLink && !magicLink.success) {
+      setError(magicLink.message)
+      setLoading(false)
+      return
+    }
+
+    alert(magicLink.message)
     
       
     setTimeout(() => {

@@ -1,22 +1,18 @@
+import NextAuth from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth from "next-auth";
 import { OAuthProviders } from "@/auth/providers";
+import Nodemailer from "next-auth/providers/nodemailer"
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     ...OAuthProviders.map(({ config }) => config),
-    // Add credentials provider if needed
-    // CredentialsProvider({
-    //   credentials: {
-    //     username: { label: "Username", type: "text" },
-    //     password: { label: "Password", type: "password" },
-    //   },
-    //   authorize: async (credentials) => {
-    //     // Add logic for authenticating credentials
-    //   },
-    // }),
+    Nodemailer({
+      server: process.env.EMAIL_SERVER,
+      from: process.env.EMAIL_FROM,
+    }),
   ],  
   session: {
     strategy: "jwt",
@@ -34,10 +30,58 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
+    
+        if (!user.isActive) {
+          // Check if there's a preregistration entry for the user
+          const preregistration = await prisma.preregistration.findUnique({
+            where: {
+              email: user.email,
+            },
+          });
+    
+          if (preregistration) {
+            // Update the user with preregistration data
+            await prisma.user.update({
+              where: { email: user.email },
+              data: {
+                name: preregistration.fullName,
+                emailVerified: new Date(), // Mark the email as verified
+                isActive: true, // Set user as active
+              },
+            });
+
+            token.name = preregistration.fullName
+    
+            // Update credentials if preregistration exists
+            await prisma.credential.upsert({
+              where: { userId: user.id },
+              update: { passwordHash: preregistration.passwordHash },
+              create: { userId: user.id, passwordHash: preregistration.passwordHash },
+            });
+    
+            // Delete preregistration entry
+            await prisma.preregistration.delete({
+              where: {
+                email: preregistration.email,
+              },
+            });
+          } else {
+            // If no preregistration entry, just update the isActive field
+            await prisma.user.update({
+              where: { email: user.email },
+              data: {
+                isActive: true,
+              },
+            });
+          }
+        }
+    
+        // Update token with user ID and role
         token.id = user.id;
         token.role = user.role;
       }
+    
       return token;
-    },
+    }
   },
 });
