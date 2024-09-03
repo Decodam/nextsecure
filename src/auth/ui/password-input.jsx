@@ -27,7 +27,7 @@ const PasswordInput = React.forwardRef(({ className, passwordScore, ...props }, 
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute inset-y-0 right-0 flex items-center pr-3"
+          className="absolute outline-none inset-y-0 right-0 flex items-center pr-3"
         >
           {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
