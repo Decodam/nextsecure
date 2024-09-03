@@ -19,6 +19,38 @@ export async function LoginWithOAuthProvider(provider, redirectTo){
 }
 
 
+export async function loginWithEmailPassword(email, password) {
+  try {
+    if (!email || !password) {
+      throw new Error("Please provide your registered email address and password");
+    }
+
+    await signIn("credentials", {
+      email, password,
+      redirect: false,
+    });
+
+    return {success: true, message: "Welcome back! Lets continue where you left off!"}
+  } catch (error) {
+    if (error instanceof Error) {
+      const type = error.type;
+      const cause = error.cause;
+
+      switch (type) {
+        case "CredentialsSignin":
+          return {success: false, message: "Invalid credentials."};
+        case "CallbackRouteError":
+          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+        default:
+          return {success: false, message: error.message || "Something went wrong. Please try again"};
+      }
+    }
+  }
+}
+
+
+
+
 export async function logout(){
   await signOut({redirect: false});
   redirect("/login")
@@ -48,7 +80,19 @@ export async function createRecoveryLink(email) {
 
     return {success: true, message: "Magic link sent! Please check your email to recover your account."}
   } catch (error) {
-    return {success: false, message: error.message}
+    if (error instanceof Error) {
+      const type = error.type;
+      const cause = error.cause;
+
+      switch (type) {
+        case "CredentialsSignin":
+          return {success: false, message: "Invalid credentials."};
+        case "CallbackRouteError":
+          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+        default:
+          return {success: false, message: error.message || "Something went wrong. Please try again"};
+      }
+    }
   }
 }
 
@@ -102,6 +146,18 @@ export async function createNewAccountLink(email, fullname, password) {
 
     return {success: true, message: "Magic link sent! Please check your email to verify your account."}
   } catch (error) {
-    return {success: false,message: error.message}
+    if (error instanceof Error) {
+      const type = error.type;
+      const cause = error.cause;
+
+      switch (type) {
+        case "CredentialsSignin":
+          return {success: false, message: "Invalid credentials."};
+        case "CallbackRouteError":
+          return {success: false, message: cause && cause.err ? cause.err.toString() : "Callback route error."};
+        default:
+          return {success: false, message: error.message || "Something went wrong. Please try again"};
+      }
+    }
   }
 }

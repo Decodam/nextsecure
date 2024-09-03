@@ -81,9 +81,7 @@ export default function SignupForm({borderless, className}) {
     alert(magicLink.message)
     
       
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+    resetForm()
   }
 
 

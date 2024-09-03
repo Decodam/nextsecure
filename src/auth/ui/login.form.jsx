@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { PasswordInput } from '@/auth/ui/password-input' 
 import { checkPasswordStrength } from '@/auth/utils'
 import OauthButtons from '@/auth/ui/oauthButtons'
+import { loginWithEmailPassword } from '@/auth/actions'
 
 
 
@@ -50,15 +51,22 @@ export default function LoginForm({borderless, className}) {
     e.preventDefault()
     setLoading(true);
     
-    if (passwordScore < 2) {
+    if (passwordScore < 3) {
       setError("Password is too weak! Add numbers, special characters and minimum 8 digits with capital letters.");
       setLoading(false);
       return;
     }
       
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+
+    const result = await loginWithEmailPassword( email, password ) 
+
+    if (result && !result.success) {
+      setError(result.message)
+      setLoading(false)
+      return
+    }
+
+    resetForm()
   }
 
 

@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { OAuthProviders } from "@/auth/providers";
 import Nodemailer from "next-auth/providers/nodemailer"
+import CredentialsProvider from "next-auth/providers/credentials";
+import { comparePassword } from "@/auth/utils";
+
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -12,6 +15,46 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Nodemailer({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
+    }),
+    CredentialsProvider({
+      async authorize(credentials) {
+        const { email, password } = credentials;
+
+        // Check if the user exists in the database
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) {
+          // User not found
+          throw new Error("No user found with the provided email.");
+        }
+
+        // Check if the user has credentials
+        const credential = await prisma.credential.findUnique({
+          where: { userId: user.id },
+        });
+
+        if (!credential) {
+          // User has no credentials
+          throw new Error("User does not have credentials login enabled.");
+        }
+
+        // Verify password
+        const isValid = await comparePassword(password, credential.passwordHash);
+
+        if (!isValid) {
+          // Invalid password
+          throw new Error("Invalid login credentials.");
+        }
+
+        // Return the user object if everything is valid
+        return { id: user.id, email: user.email, name: user.name };
+      },
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
     }),
   ],  
   session: {
