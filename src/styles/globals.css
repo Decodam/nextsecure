@@ -49,6 +49,9 @@
   }
 }
 
+.scrollbar-hidden::-webkit-scrollbar{
+  display: none;
+}
 
 @layer base {
   * {
