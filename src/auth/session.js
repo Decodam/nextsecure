@@ -14,9 +14,7 @@ export async function SignedIn({ children }) {
 
   if (!session?.user) return null;
 
-  const user = session.user;
-
-  return <>{children(user)}</>;
+  return <>{children}</>;
 }
 
 
@@ -33,6 +31,16 @@ export async function protectRoute(next = '/') {
   const session = await getServerSession();
 
   if (!session?.user) {
+    redirect(`/login?next=${encodeURIComponent(next)}`);
+  }
+
+  return session;
+}
+
+export async function protectRouteWithRole(role = "admin", next = '/') {
+  const session = await getServerSession();
+
+  if (!session?.user || session?.user?.role !== "admin") {
     redirect(`/login?next=${encodeURIComponent(next)}`);
   }
 

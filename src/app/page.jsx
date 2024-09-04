@@ -3,12 +3,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { BookIcon, ShieldIcon, RocketIcon, ChevronRightIcon, DatabaseIcon, HeartIcon } from "lucide-react"; 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SvgBrandGithub } from "@/auth/ui/brands";
 import CopyButton from "@/components/content/copyButton";
 import { SignedIn, SignedOut } from "@/auth/session";
-import { logout } from "@/auth/actions";
 import { ThemeToggleIconButton } from "@/components/ui/theme";
+import UserButton from "@/auth/ui/userModal";
 
 export default function Home() {
   return (
@@ -25,16 +24,7 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <SignedIn>
-              {(user) => (
-                <form action={logout}>
-                  <button type="submit">
-                  <Avatar>
-                    <AvatarImage src={user?.image} />
-                    <AvatarFallback>{user?.name && user.name[0]}</AvatarFallback>
-                  </Avatar>
-                  </button>
-                </form>
-              )}
+              <UserButton />
             </SignedIn>
             <SignedOut>
               <Button variant="outline" asChild>

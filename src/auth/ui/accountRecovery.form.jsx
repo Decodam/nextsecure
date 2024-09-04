@@ -57,9 +57,9 @@ export default function AccountRecoveryForm({borderless, className}) {
             <Image height={60} width={60} src="/icon.png" alt="logo" /> 
           </Link>
           <CardTitle className="text-2xl font-bold text-center">
-            Recover your {` `}        
+            Account {` `}        
             <span className="bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent">
-              Account
+              Recovery
             </span>
           </CardTitle>
           <CardDescription className="text-center">
