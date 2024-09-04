@@ -7,7 +7,7 @@ import { SvgBrandGithub } from "@/auth/ui/brands";
 import CopyButton from "@/components/content/copyButton";
 import { SignedIn, SignedOut } from "@/auth/session";
 import { ThemeToggleIconButton } from "@/components/ui/theme";
-import UserButton from "@/auth/ui/userModal";
+import UserButton from "@/auth/ui/userButton";
 
 export default function Home() {
   return (

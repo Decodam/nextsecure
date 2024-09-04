@@ -22,7 +22,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { OAuthProviders } from "../providers";
+import { OAuthProviders } from "@/auth/providers";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
@@ -211,7 +211,7 @@ export default function UserButton() {
                   <h1 className="font-semibold text-xl">Account Settings</h1>
                   <p className="text-sm text-muted-foreground">Edit your profile and security settings below to best suit your preferences</p>
                 </div>
-                <Button variant="ghost" size="icon">
+                <Button onClick={onClose} variant="ghost" size="icon">
                   <XIcon size={20} />
                 </Button>
               </div>
