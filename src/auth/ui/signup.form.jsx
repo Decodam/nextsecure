@@ -11,6 +11,7 @@ import { PasswordInput } from '@/auth/ui/password-input'
 import { checkPasswordStrength } from '@/auth/utils'
 import { createNewAccountLink } from '@/auth/actions'
 import OauthButtons from './oauthButtons'
+import { useToast } from '@/hooks/use-toast'
 
 
 
@@ -23,6 +24,7 @@ export default function SignupForm({borderless, className}) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [next, setNext] = useState(null);
+  const { toast } = useToast();
 
 
   useEffect(() => {
