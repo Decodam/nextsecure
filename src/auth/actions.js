@@ -223,6 +223,7 @@ export async function deleteProfile(){
 }
 
 
+
 export async function deleteProvider(provider) {
   try {
     // Get the current session
@@ -232,37 +233,45 @@ export async function deleteProvider(provider) {
       throw new Error("Not authenticated. Please login with your verified account to continue.");
     }
 
-    const userEmail = session.user.email;
+    const userId = session.user.id;
 
     if (!provider) {
       throw new Error("Provider is required.");
     }
 
-    // Ensure at least one other provider is present
-    const remainingProviders = await prisma.account.findMany({
+    // Check if the user has credentials (e.g., password-based auth)
+    const credentials = await prisma.credential.findFirst({
       where: {
-        user: { email: userEmail },
-        provider: { not: provider },
+        userId: userId,
       },
     });
 
-    if (remainingProviders.length === 0) {
-      throw new Error("Cannot delete the only provider account.");
+    // If the user doesn't have credentials, ensure at least one other OAuth provider is present
+    if (!credentials) {
+      const remainingProviders = await prisma.account.findMany({
+        where: {
+          userId: userId,
+          provider: { not: provider },
+        },
+      });
+
+      if (remainingProviders.length === 0) {
+        throw new Error("Cannot delete the only provider account.");
+      }
     }
 
     // Delete the account for the given provider and authenticated user
     const deletedAccount = await prisma.account.deleteMany({
       where: {
         provider,
-        user: { email: userEmail },
+        userId: userId,
       },
     });
 
     if (deletedAccount.count === 0) {
       throw new Error("Account not found or already deleted.");
     }
-
-    return { message: "Account deleted successfully" };
+    
   } catch (error) {
     console.error("Error deleting account:", error);
     return { message: error.message || "Internal server error" };

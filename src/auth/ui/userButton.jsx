@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LockIcon, LogOutIcon, UserIcon, XIcon } from "lucide-react";
-import { LoginWithOAuthProvider, logout } from "@/auth/actions";
+import { deleteProvider, LoginWithOAuthProvider, logout } from "@/auth/actions";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +42,7 @@ export default function UserButton() {
   const fetchUserProfile = async() => {
     setLoading(true);
     try {
-      const response = await fetch('/api/user/details');
+      const response = await fetch('/api/user');
       
       if (response.ok) {
         const data = await response.json();
@@ -75,47 +75,37 @@ export default function UserButton() {
   }, [])
 
 
-  async function removeAccount(provider) {
+  async function removeOauthProveider(provider) {
     setLoading(true);
-    try {
-      const response = await fetch('/api/user/delete/provider', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ provider }),
-      });
-  
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to delete account');
-      }
-  
-      const data = await response.json();
-      console.log('Account deleted successfully:', data.message);
-      toast({
-        title: 'Successfully disconnected!',
-        description: `Account removed from ${provider}.`,
-      });
-      
-      fetchUserProfile();
+    
+    const resultError = await deleteProvider(provider);
 
-    } catch (error) {
+    if (resultError) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete account.',
-        variant: 'destructive', 
-      });
-    } finally {
-      setLoading(false);
+        title: "Something went wrong!",
+        description: resultError.message,
+        variant: "destructive"
+      })
+      setLoading(false)
+      return
     }
+
+    await fetchUserProfile()
+
+    toast({
+      title: 'Oauth Provider Deleted',
+      description: `your ${provider} account has be removed from your profile`,
+    });
+
+
+    setLoading(false)
   }
 
   async function updateUserDetails( name, image) {
 
     setLoading(true)
     try {
-      const response = await fetch('/api/user/details', {
+      const response = await fetch('/api/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -335,7 +325,7 @@ export default function UserButton() {
                               }
                               onClick={() => {
                                 if(user?.accounts?.some(account => account.provider === provider)) {
-                                  removeAccount(provider)
+                                  removeOauthProveider(provider)
                                 } else {
                                   LoginWithOAuthProvider(provider)
                                 }
