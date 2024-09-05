@@ -25,6 +25,7 @@ import {
 import { OAuthProviders } from "@/auth/providers";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { DangerZoneForm, PasswordResetForm } from "@/auth/ui/profile.form";
 
 
 export default function UserButton() {
@@ -41,7 +42,7 @@ export default function UserButton() {
   const fetchUserProfile = async() => {
     setLoading(true);
     try {
-      const response = await fetch('/api/user/profile');
+      const response = await fetch('/api/user/details');
       
       if (response.ok) {
         const data = await response.json();
@@ -77,7 +78,7 @@ export default function UserButton() {
   async function removeAccount(provider) {
     setLoading(true);
     try {
-      const response = await fetch('/api/user/delete-provider', {
+      const response = await fetch('/api/user/delete/provider', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -162,10 +163,10 @@ export default function UserButton() {
           <DropdownMenuTrigger className="outline-none">
             <Avatar>
               <AvatarImage src={user.image} />
-              <AvatarFallback>{user.name[0]}</AvatarFallback>
+              <AvatarFallback className="uppercase">{user.name[0]}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mt-2 min-w-52 rounded-lg">
+          <DropdownMenuContent className="m-2 min-w-52 rounded-lg">
             <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
     
@@ -223,7 +224,7 @@ export default function UserButton() {
               <div className="profile-details flex items-center gap-4 py-2">
                 <Avatar className="size-16">
                   <AvatarImage src={(user?.image) || "/default-user.jpg"} /> {/* you can define your own default-user. currently I am not provinding one */}
-                  <AvatarFallback>{(user?.name[0]) || 'U'}</AvatarFallback>
+                  <AvatarFallback className="uppercase">{(user?.name[0]) || 'U'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 flex items-center flex-wrap gap-2">
                   <div className="flex-1">
@@ -296,7 +297,7 @@ export default function UserButton() {
                             fullName: user?.name || "",
                             profilePic: user?.image || "",
                           })
-                        }} variant="secondary">
+                        }} variant="outline">
                           Cancel
                         </Button>
                         <Button disabled={loading} type="submit">
@@ -316,8 +317,8 @@ export default function UserButton() {
                     {OAuthProviders && (
                       <div className="space-y-4">
                         {/* Google Account */}
-                        {OAuthProviders.map(({ provider, icon: Icon, key }) => (
-                          <div key={key} className="flex items-center">
+                        {OAuthProviders.map(({ provider, icon: Icon }) => (
+                          <div key={provider} className="flex items-center">
                             <div className="flex flex-1 space-x-4">
                               <Icon />
                               <span className="font-medium flex items-center">{user?.accounts?.some(account => account.provider === provider) ? "Connected" : "Connect"} to {provider}</span>
@@ -354,20 +355,31 @@ export default function UserButton() {
                 <AccordionItem value="item-3">
                   <AccordionTrigger>Password Settings</AccordionTrigger>
                   <AccordionContent>
-                    Comming soon....
+                    <p className="text-sm mb-4 text-muted-foreground">
+                      To create your new password, please enter your new prefered password and confirm it.
+                    </p>
+                    <PasswordResetForm />
                   </AccordionContent>
                 </AccordionItem>
 
 
 
                 {/* Danger Zone */}
-                <AccordionItem value="item-4">
+
+                <AccordionItem value="danger-zone">
                   <AccordionTrigger>Danger Zone</AccordionTrigger>
                   <AccordionContent>
-                    Delete your account?
+                    <p className="text-sm text-muted-foreground">
+                      Deleting your account is permanent and cannot be undone. All your data will be lost.
+                    </p>
+                    <DangerZoneForm user={user} />
                   </AccordionContent>
                 </AccordionItem>
+
+
+
               </Accordion>
+
 
             </div>
           </div>

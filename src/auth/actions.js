@@ -52,9 +52,9 @@ export async function loginWithEmailPassword(email, password) {
 
 
 
-export async function logout(){
+export async function logout(redirectTo){
   await signOut({redirect: false});
-  redirect("/login")
+  redirect(redirectTo ? redirectTo : "/login")
 }
 
 export async function createRecoveryLink(email) {

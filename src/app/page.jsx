@@ -56,7 +56,7 @@ export default function Home() {
         </div>
         <div className="mt-5 max-w-3xl text-center mx-auto">
           <p className="text-xl text-muted-foreground">
-            Kickstart your next project with prebuilt authentication templates using MongoDB and Shadcn-UI, already set up for you!
+            Kickstart your next project with prebuilt authentication templates using Auth.js and Prisma Adapter, already set up for you!
           </p>
         </div>
 
