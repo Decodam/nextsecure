@@ -7,20 +7,63 @@ import { Label } from "@/components/ui/label"
 import { PasswordInput } from "@/auth/ui/password-input"
 import { checkPasswordStrength } from "@/auth/utils"
 import { useToast } from "@/hooks/use-toast"
-import { deleteProfile } from "@/auth/actions"
+import { deleteProfile, upsertCredentials } from "@/auth/actions"
 
 export function PasswordResetForm() {
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
 
   let passwordScore = checkPasswordStrength(newPassword);
 
 
-  const handlePasswordReset = (e) => {
+  const handlePasswordReset = async(e) => {
     e.preventDefault()
-    // Implement password reset logic here
-    console.log("Password reset requested")
+
+    setLoading(true);
+
+    if (passwordScore < 3) {
+      toast({
+        title: "Password is too weak!",
+        description: "Add numbers, special characters, and a minimum of 8 characters with capital letters",
+        variant: "destructive"
+      })
+      setLoading(false)
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Password do not match",
+        description: "Please make sure the confirmed password matches with the new password",
+        variant: "destructive"
+      })
+      setLoading(false)
+      return
+    }
+    
+    const resultError = await upsertCredentials(newPassword);
+
+    if (resultError) {
+      toast({
+        title: "Something went wrong!",
+        description: resultError.message,
+        variant: "destructive"
+      })
+      setLoading(false)
+      return
+    }
+
+    toast({
+      title: 'Password updated!',
+      description: 'Your password has been successfully updated.',
+    });
+
+    setNewPassword("")
+    setConfirmPassword("")
+    setLoading(false)
   }
 
 
@@ -54,11 +97,11 @@ export function PasswordResetForm() {
               setNewPassword("");
               setConfirmPassword("")
             }}
-            type="button" variant="outline"
+            type="button" variant="outline" disabled={loading}
           >
             Cancel
           </Button>
-          <Button type="submit">
+          <Button  disabled={loading} type="submit">
             Create Credentials
           </Button>
         </div>

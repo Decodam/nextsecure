@@ -271,9 +271,41 @@ export async function deleteProvider(provider) {
     if (deletedAccount.count === 0) {
       throw new Error("Account not found or already deleted.");
     }
-    
+
   } catch (error) {
     console.error("Error deleting account:", error);
+    return { message: error.message || "Internal server error" };
+  }
+}
+
+
+export async function upsertCredentials(password) {
+  try {
+    const session = await getServerSession();
+
+    if (!session?.user) {
+      throw new Error("Not authenticated. Please login with your verified account to continue.");
+    }
+
+    const userId = session.user.id;
+
+    if (!password) {
+      throw new Error("Password is required.");
+    }
+
+    const passwordHash = await hashPassword(password);
+
+    const upsertedCredential = await prisma.credential.upsert({
+      where: { userId: userId },
+      update: { passwordHash: passwordHash },
+      create: {
+        userId: userId,
+        passwordHash: passwordHash,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error saving credentials:", error);
     return { message: error.message || "Internal server error" };
   }
 }
