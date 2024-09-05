@@ -40,7 +40,7 @@ export async function protectRoute(next = '/') {
 export async function protectRouteWithRole(role = "admin", next = '/') {
   const session = await getServerSession();
 
-  if (!session?.user || session?.user?.role !== "admin") {
+  if (!session?.user || session?.user?.role !== role) {
     redirect(`/login?next=${encodeURIComponent(next)}`);
   }
 
