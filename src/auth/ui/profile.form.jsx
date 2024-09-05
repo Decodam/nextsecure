@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label"
 import { PasswordInput } from "@/auth/ui/password-input"
 import { checkPasswordStrength } from "@/auth/utils"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
-import { logout } from "@/auth/actions"
+import { deleteProfile } from "@/auth/actions"
 
 export function PasswordResetForm() {
   const [newPassword, setNewPassword] = useState("")
@@ -69,44 +68,35 @@ export function PasswordResetForm() {
 }
 
 
-export function DangerZoneForm({action, user}) {
+export function DangerZoneForm({ user}) {
   const [deleteConfirmEmail, setDeleteConfirmEmail] = useState("")
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const router = useRouter();
 
 
   const handleAccountDeletion = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault(); 
 
     setLoading(true);
+    
+    const resultError = await deleteProfile();
 
-    try {
-      const response = await fetch('/api/user/delete/account', {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to delete account');
-      }
-
+    if (resultError) {
       toast({
-        title: 'Account Deleted',
-        description: 'Your account has been successfully deleted.',
-      });
-
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: `An error occurred: ${error.message}`,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
+        title: "Something went wrong!",
+        description: resultError.message,
+        variant: "destructive"
+      })
+      setLoading(false)
+      return
     }
 
-    await logout("/signup")
+    toast({
+      title: 'Account Deleted',
+      description: 'Your account has been successfully deleted.',
+    });
+
+    setLoading(false)
   };
 
   return(

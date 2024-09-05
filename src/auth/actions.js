@@ -4,6 +4,8 @@ import { signIn, signOut } from "@/auth/core";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/auth/utils";
+import getServerSession from "@/auth/session";
+
 
 
 export async function LoginWithOAuthProvider(provider, redirectTo){
@@ -21,6 +23,13 @@ export async function LoginWithOAuthProvider(provider, redirectTo){
 
 export async function loginWithEmailPassword(email, password) {
   try {
+    const session = await getServerSession();
+
+    if (session?.user) {
+      throw new Error("User already logged in! Please logout to login with another account");
+    }
+
+
     if (!email || !password) {
       throw new Error("Please provide your registered email address and password");
     }
@@ -59,6 +68,12 @@ export async function logout(redirectTo){
 
 export async function createRecoveryLink(email) {
   try {
+    const session = await getServerSession();
+
+    if (session?.user) {
+      throw new Error("User already logged in! Please logout to create a recovery link");
+    }
+
     if (!email) {
       throw new Error("Please provide your registered email address");
     }
@@ -112,6 +127,12 @@ export async function createRecoveryLink(email) {
 
 export async function createNewAccountLink(email, fullname, password) {
   try {
+    const session = await getServerSession();
+
+    if (session?.user) {
+      throw new Error("User already logged in! Please logout to create a new account");
+    }
+
     if (!email || !fullname || !password) {
       throw new Error("Please provide your email address, full name and password.");
     }
@@ -175,4 +196,75 @@ export async function createNewAccountLink(email, fullname, password) {
   }
 
   redirect("/")
+}
+
+
+export async function deleteProfile(){
+  try {
+    const session = await getServerSession();
+
+    if (!session?.user) {
+      throw new Error("Please login with your verified account to continue");
+    }
+
+
+    const userId = session?.user.id
+
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+  } catch (error) {
+    return {message: error.message || "Something went wrong. Please try again"};
+  }
+
+  await signOut({redirect: false});
+  redirect("/signup")
+}
+
+
+export async function deleteProvider(provider) {
+  try {
+    // Get the current session
+    const session = await getServerSession();
+
+    if (!session?.user) {
+      throw new Error("Not authenticated. Please login with your verified account to continue.");
+    }
+
+    const userEmail = session.user.email;
+
+    if (!provider) {
+      throw new Error("Provider is required.");
+    }
+
+    // Ensure at least one other provider is present
+    const remainingProviders = await prisma.account.findMany({
+      where: {
+        user: { email: userEmail },
+        provider: { not: provider },
+      },
+    });
+
+    if (remainingProviders.length === 0) {
+      throw new Error("Cannot delete the only provider account.");
+    }
+
+    // Delete the account for the given provider and authenticated user
+    const deletedAccount = await prisma.account.deleteMany({
+      where: {
+        provider,
+        user: { email: userEmail },
+      },
+    });
+
+    if (deletedAccount.count === 0) {
+      throw new Error("Account not found or already deleted.");
+    }
+
+    return { message: "Account deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return { message: error.message || "Internal server error" };
+  }
 }

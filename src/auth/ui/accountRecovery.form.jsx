@@ -44,9 +44,7 @@ export default function AccountRecoveryForm({borderless, className}) {
     })
 
 
-    setTimeout(() => {
-      resetForm()
-    }, 1000);
+    resetForm()
   }
 
 

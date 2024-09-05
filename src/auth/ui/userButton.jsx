@@ -115,7 +115,7 @@ export default function UserButton() {
 
     setLoading(true)
     try {
-      const response = await fetch('/api/user/profile', {
+      const response = await fetch('/api/user/details', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
