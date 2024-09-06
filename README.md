@@ -137,9 +137,9 @@ Next Secure uses prisma orm to manage the database. This allows easier interacti
 
 **Available Schema:**
 
-[Postgres Schema](schemas/postgres.schema.md)
+[Postgres Schema](_schemas/postgres.schema)
 
-[MongoDB Schema](schemas/mongo.schema.md)
+[MongoDB Schema](_schemas/mongo.schema)
 
 # Components
 

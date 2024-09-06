@@ -1,15 +1,10 @@
-# MongoDB Schema
+generator client {
+  provider = "prisma-client-js"
+}
 
-To align the MongoDB Prisma schema with the PostgreSQL schema and incorporate the additional fields from the PostgreSQL version, you'll need to add equivalent fields and relationships. To get started add your database URL to the `.env` file and then run `npx prisma migrate dev` or else `npx prisma studio` to visualise the database.
-
-```bash
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model User {
@@ -22,12 +17,9 @@ model User {
   role          String          @default("user")
   credential    Credential?
   accounts      Account[]
-  sessions      Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([email])
 }
 
 model Account {
@@ -50,18 +42,6 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@index([userId, provider])
-}
-
-model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken String   @unique
-  userId       String   @db.ObjectId
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -73,7 +53,6 @@ model VerificationToken {
   createdAt  DateTime @default(now())
 
   @@unique([identifier, token])
-  @@index([identifier])
 }
 
 model Preregistration {
@@ -83,21 +62,15 @@ model Preregistration {
   passwordHash  String
   createdAt     DateTime        @default(now())
   expiresAt     DateTime?       // Optional: Set an expiration time for preregistration entries
-
-  @@index([email])
 }
 
 model Credential {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String          @db.ObjectId
+  userId        String          @db.ObjectId @unique
   passwordHash  String
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }
-
-```
