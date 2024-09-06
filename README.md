@@ -48,7 +48,7 @@ If you want to add auth to an **existing project**, you can follow the following
     
 4. Add a post install script for prisma in the `package.json` file for production
     
-    ```json
+    ```text
     {
       ...
       "scripts": {
@@ -166,24 +166,24 @@ import { logout } from "@/auth/actions";
 import UserButton from "@/auth/ui/userButton";
 
 export default function Home() {
-	return (
-		<div>
-			<SignedIn>
-				{/* user button gives the user, profile settings and logout control */}
-				<UserButton />
-				{/* 
-					logout is a server action you can also pass the redirect url
-					() => {logout("/somewhere")}
-				*/}
-				<form action={logout}>
-					<button>Logout now<button>
-				</form>
-			</SignedIn>
-			<SignedOut>
-				{/* renders child element in in */}
-			</SignedOut>
-		</div>
-  )
+ return (
+  <div>
+   <SignedIn>
+    {/* user button gives the user, profile settings and logout control */}
+    <UserButton />
+    {/* 
+     logout is a server action you can also pass the redirect url
+     () => {logout("/somewhere")}
+    */}
+    <form action={logout}>
+     <button>Logout now<button>
+    </form>
+   </SignedIn>
+   <SignedOut>
+    {/* renders child element in in */}
+   </SignedOut>
+  </div>
+ )
 }
 ```
 
@@ -195,7 +195,7 @@ You can protect your private routes using `protectRoute` function as shown here.
 import { protectRoute } from "@/auth/session";
 
 export default async function PrivatePage({}) {
-	// unauthenticated users will be redirected to /login with next=/private
+ // unauthenticated users will be redirected to /login with next=/private
   const session = await protectRoute("/private");
 
   return (
@@ -226,7 +226,7 @@ export default async function AuthLayout({children}) {
 
 You can also protect your **API route handlers** like this.
 
-```
+```js
 import { auth } from "@/auth/core"
 import { NextResponse } from "next/server"
 
@@ -234,7 +234,7 @@ export const GET = auth(async function GET(req) {
   if (!req.auth) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
-	... 
+ /* ... */
 }
 ```
 
